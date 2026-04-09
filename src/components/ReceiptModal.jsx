@@ -1,3 +1,5 @@
+import { QRCodeSVG } from 'qrcode.react'
+
 export default function ReceiptModal({ order, onClose }) {
   if (!order) return null
 
@@ -108,6 +110,15 @@ export default function ReceiptModal({ order, onClose }) {
               {PAYMENT_LABEL[order.payment_method]}
             </span>
           </div>
+
+          <div className="hidden print:flex print:flex-col print:items-center print:justify-center print:border-t print:border-dashed print:border-slate-300 print:pt-4 print:pb-2">
+            <QRCodeSVG
+              value={`${window.location.origin}/receipt/${order.id}`}
+              size={120}
+              level="M"
+            />
+            <p className="print:mt-2 print:text-[0.7rem] print:text-slate-500">สแกนเพื่อดูใบเสร็จออนไลน์</p>
+          </div>
         </div>
 
         <div className="space-y-2 border-t border-slate-100 px-6 pb-6 pt-4 dark:border-[rgba(120,144,184,0.14)]">
@@ -179,6 +190,9 @@ export default function ReceiptModal({ order, onClose }) {
           }
           .rounded-\\[1\\.25rem\\], .rounded-\\[1\\.4rem\\], .rounded-full {
             border-radius: 0 !important;
+          }
+          .hidden {
+            display: block !important;
           }
         }
       `}</style>

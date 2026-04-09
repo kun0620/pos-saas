@@ -247,6 +247,48 @@ export default function DashboardPage() {
                 )}
               </section>
 
+              {data.cashierSales && data.cashierSales.length > 1 && (
+                <section className="rounded-[2rem] bg-white p-5 shadow-[0_22px_50px_rgba(18,28,40,0.06)] dark:bg-[rgba(16,26,42,0.92)] dark:shadow-[0_22px_50px_rgba(2,8,20,0.35)]">
+                  <div className="mb-5 flex items-center justify-between gap-3">
+                    <div>
+                      <h2 className="font-display text-xl font-semibold text-on-surface">ยอดขายแยกตามแคชเชียร์</h2>
+                      <p className="mt-1 text-sm text-slate-400 dark:text-slate-400">ข้อมูลการขายของสมาชิกแต่ละคน</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    {data.cashierSales.map((cashier) => {
+                      const emailUsername = cashier.email.split('@')[0]
+                      const roleLabel = cashier.role === 'owner' ? 'Owner' : cashier.role === 'manager' ? 'Manager' : 'Cashier'
+                      const roleColor = cashier.role === 'owner' ? 'bg-amber-100 text-amber-700' : cashier.role === 'manager' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+                      const maxSales = data.cashierSales[0]?.total_sales || 1
+
+                      return (
+                        <div key={cashier.user_id} className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <span className={clsx('rounded-full px-3 py-1 text-xs font-semibold', roleColor)}>
+                                {roleLabel}
+                              </span>
+                              <span className="min-w-0 flex-1 truncate text-sm font-medium text-on-surface">{emailUsername}</span>
+                            </div>
+                            <span className="text-sm font-semibold text-on-surface">฿{cashier.total_sales.toFixed(0)}</span>
+                          </div>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex-1 h-2 rounded-full bg-surface dark:bg-[rgba(22,34,53,0.95)]">
+                              <div
+                                className="h-full rounded-full bg-gradient-to-r from-primary to-primary-dark"
+                                style={{ width: `${(cashier.total_sales / maxSales) * 100}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-slate-400 dark:text-slate-400 whitespace-nowrap">{cashier.order_count} order</span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </section>
+              )}
+
               {period === 'today' && (
                 <section className="rounded-[2rem] bg-white p-5 shadow-[0_22px_50px_rgba(18,28,40,0.06)] dark:bg-[rgba(16,26,42,0.92)] dark:shadow-[0_22px_50px_rgba(2,8,20,0.35)]">
                   <div className="mb-5 flex items-center justify-between gap-3">

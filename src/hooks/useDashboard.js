@@ -29,7 +29,7 @@ export function useDashboard(shopId, period = 'today') {
     const { startIso: chartStartIso } = getDateRange('7days')
 
     // ดึงข้อมูลทั้งหมดพร้อมกัน
-    const [ordersRes, prevOrdersRes, recentOrdersRes, chartRes, paymentBreakdownRes, hourlyDataRes] =
+    const [ordersRes, prevOrdersRes, recentOrdersRes, chartRes, paymentBreakdownRes, hourlyDataRes, cashierSalesRes] =
         await Promise.all([
             // orders ช่วงปัจจุบัน
             supabase
@@ -96,6 +96,13 @@ export function useDashboard(shopId, period = 'today') {
             .gte('created_at', getDateRange('today').startIso)
             .lte('created_at', getDateRange('today').endIso)
             .order('created_at'),
+
+            // ยอดขายแยกตามแคชเชียร์
+            supabase.rpc('get_cashier_sales', {
+              p_shop_id: shopId,
+              p_start: startIso,
+              p_end: endIso
+            }),
         ])
 
     // คำนวณ metrics
@@ -185,6 +192,9 @@ export function useDashboard(shopId, period = 'today') {
     .sort((a, b) => b.total - a.total)
     .slice(0, 5)
 
+    // ยอดขายแยกตามแคชเชียร์
+    const cashierSales = cashierSalesRes.data || []
+
     setData({
       totalSales,
       orderCount,
@@ -196,6 +206,7 @@ export function useDashboard(shopId, period = 'today') {
       recentOrders,
       paymentBreakdown,
       hourlyData,
+      cashierSales,
     })
     setLoading(false)
   }, [shopId, period])
